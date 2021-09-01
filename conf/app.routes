@@ -1,0 +1,5 @@
+# microservice specific routes
+
+GET        /account-link/:id/:linkId            controllers.AccountLinkController.getAccountLink(id: String, linkId: String)
+POST       /update-links                        controllers.AccountLinkController.clearAndInsert()
+DELETE     /remove/:id                          controllers.AccountLinkController.remove(id:String)
