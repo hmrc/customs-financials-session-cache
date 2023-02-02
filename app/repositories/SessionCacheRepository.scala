@@ -84,11 +84,8 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
 
 trait SessionCacheRepository {
   def get(sessionId: String, linkId: String): Future[Option[AccountLink]]
-
   def getAccountNumbers(eori: String, sessionId: String): Future[Option[Seq[String]]]
-
   def clearAndInsert(sessionId: String, accountLinks: Seq[AccountLink]): Future[Boolean]
-
   def remove(sessionId: String): Future[Boolean]
 }
 

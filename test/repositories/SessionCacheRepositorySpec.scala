@@ -25,7 +25,6 @@ import util.SpecBase
 
 class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
 
-
   "get" should {
     "return none if no session data stored by a given id" in new Setup {
       running(app) {
@@ -53,6 +52,37 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
         await(repository.clearAndInsert("someSessionId", Seq(accountLink)))
         val result = await(repository.get("someSessionId", "linkId"))
         result.value mustBe accountLink
+      }
+    }
+  }
+
+  "getAccountNumbers" should {
+    "return none if no session data stored by a given id" in new Setup {
+      running(app) {
+        val result = await(repository.getAccountNumbers("someEori", "someSessionId"))
+        result mustBe None
+      }
+    }
+
+    "return none if there is data stored by a given session id but no data found associated to a given eori" in new Setup {
+      val accountLink: AccountLink = AccountLink("someEori", "someAccountNumber", "open", Some(1), "linkId")
+
+      running(app) {
+        val repository = app.injector.instanceOf[SessionCacheRepository]
+        await(repository.clearAndInsert("someSessionId", Seq(accountLink)))
+        val result = await(repository.getAccountNumbers("invalidEori", "someSessionId"))
+        result mustBe Some(Vector())
+      }
+    }
+
+    "return accountNumbers if the sessionId is stored and there is a eori match in the session" in new Setup {
+      val accountLink: AccountLink = AccountLink("someEori", "1234567", "open", Some(1), "linkId")
+
+      running(app) {
+        val repository = app.injector.instanceOf[SessionCacheRepository]
+        await(repository.clearAndInsert("someSessionId", Seq(accountLink)))
+        val result = await(repository.getAccountNumbers("someEori", "someSessionId"))
+        result mustBe Some(Vector("1234567"))
       }
     }
   }

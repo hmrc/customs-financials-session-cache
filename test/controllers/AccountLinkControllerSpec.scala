@@ -22,26 +22,24 @@ import play.api.test.Helpers._
 import play.api.{Application, inject}
 import repositories.SessionCacheRepository
 import util.SpecBase
-
 import scala.concurrent.Future
 
 class AccountLinkControllerSpec extends SpecBase {
 
   "getAccountLink" must {
     "return OK with a account link json if found in the session cache" in new Setup {
-
       running(app) {
         val accountLink = AccountLink("someEori", "someAccountNumber", "open", Some(1), "linkId")
         when(mockSessionCache.get(eqTo(testSessionId), eqTo(testLinkId)))
           .thenReturn(Future.successful(Some(accountLink)))
-          val result = route(app, fakeRequest(GET, controllers.routes.AccountLinkController.getAccountLink(testSessionId, testLinkId).url)).value
-          status(result) mustBe OK
-          val accountLinkResult = contentAsJson(result).as[AccountLink]
-          accountLinkResult mustBe accountLink
+        val result = route(app, fakeRequest(GET, controllers.routes.AccountLinkController.getAccountLink(testSessionId, testLinkId).url)).value
+        status(result) mustBe OK
+        val accountLinkResult = contentAsJson(result).as[AccountLink]
+        accountLinkResult mustBe accountLink
       }
     }
 
-    "return NOT_FOUND when no data found in the session cache" in new Setup {
+    "return NOT_FOUND when no data found in the session cache when retrieving an accountLink" in new Setup {
       when(mockSessionCache.get(eqTo(testSessionId), eqTo(testLinkId)))
         .thenReturn(Future.successful(None))
 
@@ -56,7 +54,8 @@ class AccountLinkControllerSpec extends SpecBase {
         .thenReturn(Future.failed(new RuntimeException("Something went wrong")))
 
       running(app) {
-        val result = route(app, fakeRequest(GET, controllers.routes.AccountLinkController.getAccountLink(testSessionId, testLinkId).url)).value
+        val result = route(app, fakeRequest(
+          GET, controllers.routes.AccountLinkController.getAccountLink(testSessionId, testLinkId).url)).value
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
@@ -141,17 +140,56 @@ class AccountLinkControllerSpec extends SpecBase {
     }
   }
 
+  "getAccountNumber" must {
+    "return OK with a account number json if found in the session cache" in new Setup {
+      running(app) {
+        val accountLink = AccountLink("someEori", "1234567", "open", Some(1), "linkId")
+        val accountNumbers: Seq[String] = Seq("1234567")
+
+        when(mockSessionCache.getAccountNumbers(testEori,testSessionId))
+          .thenReturn(Future.successful(Some(accountNumbers)))
+
+        val result = route(app, fakeRequest(
+          GET, controllers.routes.AccountLinkController.getAccountNumbers(testEori, testSessionId).url)).value
+
+        status(result) mustBe OK
+        val accountNumberResult = contentAsJson(result).as[Seq[String]]
+        accountNumberResult mustBe Vector("1234567")
+      }
+    }
+
+    "return NOT_FOUND when no data found in the session cache when retrieving an accountNumber" in new Setup {
+      when(mockSessionCache.getAccountNumbers(eqTo(testEori), eqTo(testSessionId)))
+        .thenReturn(Future.successful(None))
+
+      running(app) {
+        val result = route(app, fakeRequest(
+          GET, controllers.routes.AccountLinkController.getAccountNumbers(testEori, testSessionId).url)).value
+        status(result) mustBe NOT_FOUND
+      }
+    }
+
+    "return an INTERNAL_SERVER_ERROR if an exception was thrown when retrieving an accountNumber" in new Setup {
+      when(mockSessionCache.getAccountNumbers(eqTo(testEori), eqTo(testSessionId)))
+        .thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+
+      running(app) {
+        val result = route(app, fakeRequest(
+          GET, controllers.routes.AccountLinkController.getAccountNumbers(testEori, testSessionId).url)).value
+        status(result) mustBe INTERNAL_SERVER_ERROR
+      }
+    }
+  }
 
   trait Setup {
     val mockSessionCache: SessionCacheRepository = mock[SessionCacheRepository]
     val testSessionId: String = "sessionId"
     val testLinkId: String = "linkId"
-
+    val testEori: String = "someEori"
     val accountLink: AccountLink = AccountLink("someEori", "someAccountNumber", "open", Some(1), "linkId")
 
     val app: Application = applicationBuilder().overrides(
       inject.bind[SessionCacheRepository].toInstance(mockSessionCache)
     ).build()
   }
-
 }

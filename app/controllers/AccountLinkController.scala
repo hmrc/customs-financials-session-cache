@@ -16,7 +16,7 @@
 
 package controllers
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import models.AccountLinksRequest
 import repositories.SessionCacheRepository
@@ -25,8 +25,7 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class AccountLinkController @Inject()(
-                                       cc: ControllerComponents,
+class AccountLinkController @Inject()(cc: ControllerComponents,
                                        sessionCacheRepository: SessionCacheRepository
                                      )(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
@@ -37,8 +36,8 @@ class AccountLinkController @Inject()(
     }.recover { case _ => InternalServerError}
   }
 
-  def getAccountNumbers(eori: String, id: String): Action[AnyContent] = Action.async {
-    sessionCacheRepository.getAccountNumbers(eori, id).map {
+  def getAccountNumbers(eori: String, sessionId: String): Action[AnyContent] = Action.async {
+    sessionCacheRepository.getAccountNumbers(eori, sessionId).map {
       case Some(accountNumbers) => Ok(Json.toJson(accountNumbers))
       case _ => NotFound
     }.recover { case _ => InternalServerError }
