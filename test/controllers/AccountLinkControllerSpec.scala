@@ -32,8 +32,10 @@ class AccountLinkControllerSpec extends SpecBase {
         val accountLink = AccountLink("someEori", "someAccountNumber", "open", Some(1), "linkId")
         when(mockSessionCache.get(eqTo(testSessionId), eqTo(testLinkId)))
           .thenReturn(Future.successful(Some(accountLink)))
+
         val result = route(app, fakeRequest(GET, controllers.routes.AccountLinkController.getAccountLink(testSessionId, testLinkId).url)).value
         status(result) mustBe OK
+
         val accountLinkResult = contentAsJson(result).as[AccountLink]
         accountLinkResult mustBe accountLink
       }
