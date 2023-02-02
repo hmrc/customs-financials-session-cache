@@ -16,7 +16,7 @@
 
 package controllers
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import models.AccountLinksRequest
 import repositories.SessionCacheRepository
@@ -35,6 +35,13 @@ class AccountLinkController @Inject()(
       case Some(accountLink) => Ok(Json.toJson(accountLink))
       case None => NotFound
     }.recover { case _ => InternalServerError}
+  }
+
+  def getAccountNumbers(eori: String, id: String): Action[AnyContent] = Action.async {
+    sessionCacheRepository.getAccountNumbers(eori, id).map {
+      case Some(accountNumbers) => Ok(Json.toJson(accountNumbers))
+      case _ => NotFound
+    }.recover { case _ => InternalServerError }
   }
 
   def clearAndInsert(): Action[AccountLinksRequest] = Action.async(parse.json[AccountLinksRequest]) { implicit request =>
