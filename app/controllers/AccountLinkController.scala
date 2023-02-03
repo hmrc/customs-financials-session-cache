@@ -25,8 +25,7 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class AccountLinkController @Inject()(
-                                       cc: ControllerComponents,
+class AccountLinkController @Inject()(cc: ControllerComponents,
                                        sessionCacheRepository: SessionCacheRepository
                                      )(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
@@ -35,6 +34,13 @@ class AccountLinkController @Inject()(
       case Some(accountLink) => Ok(Json.toJson(accountLink))
       case None => NotFound
     }.recover { case _ => InternalServerError}
+  }
+
+  def getAccountNumbers(eori: String, sessionId: String): Action[AnyContent] = Action.async {
+    sessionCacheRepository.getAccountNumbers(eori, sessionId).map {
+      case Some(accountNumbers) => Ok(Json.toJson(accountNumbers))
+      case _ => NotFound
+    }.recover { case _ => InternalServerError }
   }
 
   def clearAndInsert(): Action[AccountLinksRequest] = Action.async(parse.json[AccountLinksRequest]) { implicit request =>

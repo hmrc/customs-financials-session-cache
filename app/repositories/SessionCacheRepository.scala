@@ -56,6 +56,14 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
     } yield result
   }
 
+  override def getAccountNumbers(eori: String, sessionId: String): Future[Option[Seq[String]]] = {
+    for {
+      record <- collection.find(equal("_id", sessionId)).toSingle().toFutureOption()
+      result = record.flatMap(a => Option(a.accountLinks.filter(link => (link.eori == eori) && (link.accountNumber.size == 7))
+        .map(_.accountNumber)))
+    } yield result
+  }
+
   override def clearAndInsert(sessionId: String, accountLinks: Seq[AccountLink]): Future[Boolean] = {
     val record = AccountLinksMongo(accountLinks)
     for {
@@ -76,9 +84,8 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
 
 trait SessionCacheRepository {
   def get(sessionId: String, linkId: String): Future[Option[AccountLink]]
-
+  def getAccountNumbers(eori: String, sessionId: String): Future[Option[Seq[String]]]
   def clearAndInsert(sessionId: String, accountLinks: Seq[AccountLink]): Future[Boolean]
-
   def remove(sessionId: String): Future[Boolean]
 }
 
