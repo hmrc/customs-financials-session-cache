@@ -36,8 +36,8 @@ class AccountLinkController @Inject()(cc: ControllerComponents,
     }.recover { case _ => InternalServerError}
   }
 
-  def getAccountNumbers(eori: String, sessionId: String): Action[AnyContent] = Action.async {
-    sessionCacheRepository.getAccountNumbers(eori, sessionId).map {
+  def getAccountLinks(eori: String, sessionId: String): Action[AnyContent] = Action.async {
+    sessionCacheRepository.getAccountLinks(eori, sessionId).map {
       case Some(accountNumbers) => Ok(Json.toJson(accountNumbers))
       case _ => NotFound
     }.recover { case _ => InternalServerError }

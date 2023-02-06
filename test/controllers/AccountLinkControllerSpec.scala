@@ -145,39 +145,38 @@ class AccountLinkControllerSpec extends SpecBase {
   "getAccountNumber" must {
     "return OK with a account number json if found in the session cache" in new Setup {
       running(app) {
-        val accountLink = AccountLink("someEori", "1234567", "open", Some(1), "linkId")
-        val accountNumbers: Seq[String] = Seq("1234567")
+        val accountLink = Seq(AccountLink("someEori", "1234567", "open", Some(1), "linkId"))
 
-        when(mockSessionCache.getAccountNumbers(testEori,testSessionId))
-          .thenReturn(Future.successful(Some(accountNumbers)))
+        when(mockSessionCache.getAccountLinks(testEori,testSessionId))
+          .thenReturn(Future.successful(Option(accountLink)))
 
         val result = route(app, fakeRequest(
-          GET, controllers.routes.AccountLinkController.getAccountNumbers(testEori, testSessionId).url)).value
+          GET, controllers.routes.AccountLinkController.getAccountLinks(testEori, testSessionId).url)).value
 
         status(result) mustBe OK
-        val accountNumberResult = contentAsJson(result).as[Seq[String]]
-        accountNumberResult mustBe Vector("1234567")
+        val acountLinkResult = contentAsJson(result).as[Seq[AccountLink]]
+        acountLinkResult mustBe accountLink
       }
     }
 
     "return NOT_FOUND when no data found in the session cache when retrieving an accountNumber" in new Setup {
-      when(mockSessionCache.getAccountNumbers(eqTo(testEori), eqTo(testSessionId)))
+      when(mockSessionCache.getAccountLinks(eqTo(testEori), eqTo(testSessionId)))
         .thenReturn(Future.successful(None))
 
       running(app) {
         val result = route(app, fakeRequest(
-          GET, controllers.routes.AccountLinkController.getAccountNumbers(testEori, testSessionId).url)).value
+          GET, controllers.routes.AccountLinkController.getAccountLinks(testEori, testSessionId).url)).value
         status(result) mustBe NOT_FOUND
       }
     }
 
     "return an INTERNAL_SERVER_ERROR if an exception was thrown when retrieving an accountNumber" in new Setup {
-      when(mockSessionCache.getAccountNumbers(eqTo(testEori), eqTo(testSessionId)))
+      when(mockSessionCache.getAccountLinks(eqTo(testEori), eqTo(testSessionId)))
         .thenReturn(Future.failed(new RuntimeException("Something went wrong")))
 
       running(app) {
         val result = route(app, fakeRequest(
-          GET, controllers.routes.AccountLinkController.getAccountNumbers(testEori, testSessionId).url)).value
+          GET, controllers.routes.AccountLinkController.getAccountLinks(testEori, testSessionId).url)).value
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
