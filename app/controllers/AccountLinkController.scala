@@ -39,7 +39,7 @@ class AccountLinkController @Inject()(cc: ControllerComponents,
     sessionCacheRepository.getAccountLinks(sessionId).map {
       case Some(accountNumbers) => Ok(Json.toJson(accountNumbers))
       case _ => NotFound
-    }.recover { case _ => NotFound }
+    }.recover { case _ => InternalServerError }
   }
 
   def clearAndInsert(): Action[AccountLinksRequest] = Action.async(parse.json[AccountLinksRequest]) { implicit request =>

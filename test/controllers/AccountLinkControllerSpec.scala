@@ -170,14 +170,14 @@ class AccountLinkControllerSpec extends SpecBase {
       }
     }
 
-    "return an NOT FOUND if no account links can be found" in new Setup {
+    "return an INTERNAL_SERVER_ERROR if an exception was thrown when retrieving an accountNumber" in new Setup {
       when(mockSessionCache.getAccountLinks(eqTo(testSessionId)))
         .thenReturn(Future.failed(new RuntimeException("Something went wrong")))
 
       running(app) {
         val result = route(app, fakeRequest(
           GET, controllers.routes.AccountLinkController.getAccountLinks(testSessionId).url)).value
-        status(result) mustBe NOT_FOUND
+        status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
   }
