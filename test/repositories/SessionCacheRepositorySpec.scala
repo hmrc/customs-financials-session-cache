@@ -59,7 +59,7 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
   "getAccountLinks" should {
     "return none if no session data stored by a given id" in new Setup {
       running(app) {
-        val result = await(repository.getAccountLinks("someEori", "someSessionId"))
+        val result = await(repository.getAccountLinks("someSessionId"))
         result mustBe None
       }
     }
@@ -70,7 +70,7 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
         await(repository.clearAndInsert("someSessionId", Seq(accountLink)))
-        val result = await(repository.getAccountLinks("invalidEori", "someSessionId"))
+        val result = await(repository.getAccountLinks("someSessionId"))
         result mustBe Some(Vector())
       }
     }
@@ -81,7 +81,7 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
         await(repository.clearAndInsert("someSessionId", Seq(accountLink)))
-        val result = await(repository.getAccountLinks("someEori", "someSessionId"))
+        val result = await(repository.getAccountLinks("someSessionId"))
         result mustBe Some(Vector(accountLink))
       }
     }

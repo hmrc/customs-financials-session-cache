@@ -147,11 +147,11 @@ class AccountLinkControllerSpec extends SpecBase {
       running(app) {
         val accountLink = Seq(AccountLink("someEori", "1234567", "open", Some(1), "linkId"))
 
-        when(mockSessionCache.getAccountLinks(testEori,testSessionId))
+        when(mockSessionCache.getAccountLinks(testSessionId))
           .thenReturn(Future.successful(Option(accountLink)))
 
         val result = route(app, fakeRequest(
-          GET, controllers.routes.AccountLinkController.getAccountLinks(testEori, testSessionId).url)).value
+          GET, controllers.routes.AccountLinkController.getAccountLinks(testSessionId).url)).value
 
         status(result) mustBe OK
         val acountLinkResult = contentAsJson(result).as[Seq[AccountLink]]
@@ -160,24 +160,24 @@ class AccountLinkControllerSpec extends SpecBase {
     }
 
     "return NOT_FOUND when no data found in the session cache when retrieving an accountNumber" in new Setup {
-      when(mockSessionCache.getAccountLinks(eqTo(testEori), eqTo(testSessionId)))
+      when(mockSessionCache.getAccountLinks(eqTo(testSessionId)))
         .thenReturn(Future.successful(None))
 
       running(app) {
         val result = route(app, fakeRequest(
-          GET, controllers.routes.AccountLinkController.getAccountLinks(testEori, testSessionId).url)).value
+          GET, controllers.routes.AccountLinkController.getAccountLinks(testSessionId).url)).value
         status(result) mustBe NOT_FOUND
       }
     }
 
-    "return an INTERNAL_SERVER_ERROR if an exception was thrown when retrieving an accountNumber" in new Setup {
-      when(mockSessionCache.getAccountLinks(eqTo(testEori), eqTo(testSessionId)))
+    "return an NOT FOUND if no account links can be found" in new Setup {
+      when(mockSessionCache.getAccountLinks(eqTo(testSessionId)))
         .thenReturn(Future.failed(new RuntimeException("Something went wrong")))
 
       running(app) {
         val result = route(app, fakeRequest(
-          GET, controllers.routes.AccountLinkController.getAccountLinks(testEori, testSessionId).url)).value
-        status(result) mustBe INTERNAL_SERVER_ERROR
+          GET, controllers.routes.AccountLinkController.getAccountLinks(testSessionId).url)).value
+        status(result) mustBe NOT_FOUND
       }
     }
   }
