@@ -26,7 +26,6 @@ import play.api.libs.json.{Format, OWrites, Reads, __}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
-
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
@@ -56,10 +55,10 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
     } yield result
   }
 
-  override def getAccountLinks(eori: String, sessionId: String): Future[Option[Seq[AccountLink]]] = {
+  override def getAccountLinks(sessionId: String): Future[Option[Seq[AccountLink]]] = {
     for {
       record <- collection.find(equal("_id", sessionId)).toSingle().toFutureOption()
-      result = record.flatMap(a => Option(a.accountLinks.filter(link => (link.eori == eori) && (link.accountNumber.size == 7))))
+      result = record.flatMap(a => Option(a.accountLinks.filter(link => link.accountNumber.size == 7)))
     } yield result
   }
 
@@ -83,7 +82,7 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
 
 trait SessionCacheRepository {
   def get(sessionId: String, linkId: String): Future[Option[AccountLink]]
-  def getAccountLinks(eori: String, sessionId: String): Future[Option[Seq[AccountLink]]]
+  def getAccountLinks(sessionId: String): Future[Option[Seq[AccountLink]]]
   def clearAndInsert(sessionId: String, accountLinks: Seq[AccountLink]): Future[Boolean]
   def remove(sessionId: String): Future[Boolean]
 }
