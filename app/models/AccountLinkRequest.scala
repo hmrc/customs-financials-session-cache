@@ -16,7 +16,6 @@
 
 package models
 
-
 import play.api.libs.json.{Json, OFormat}
 
 case class AccountLinksRequest(sessionId: String,
