@@ -59,7 +59,7 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
   override def getAccountLinks(sessionId: String): Future[Option[Seq[AccountLink]]] = {
     for {
       record <- collection.find(equal("_id", sessionId)).toSingle().toFutureOption()
-      result = record.flatMap(a => Option(a.accountLinks.filter(link => link.accountNumber.length == 7)))
+      result = record.flatMap(a => Option(a.accountLinks.filter(link => link.accountNumber.size == 7)))
     } yield result
   }
 
