@@ -29,7 +29,7 @@ class AccountLinkControllerSpec extends SpecBase {
   "getAccountLink" must {
     "return OK with a account link json if found in the session cache" in new Setup {
       running(app) {
-        val accountLink = AccountLink("someEori", "someAccountNumber", "open", Some(1), "linkId")
+        val accountLink = AccountLink("someEori", false, "someAccountNumber", "open", Some(1), "linkId")
         when(mockSessionCache.get(eqTo(testSessionId), eqTo(testLinkId)))
           .thenReturn(Future.successful(Some(accountLink)))
 
@@ -145,7 +145,7 @@ class AccountLinkControllerSpec extends SpecBase {
   "getAccountNumber" must {
     "return OK with a account number json if found in the session cache" in new Setup {
       running(app) {
-        val accountLink = Seq(AccountLink("someEori", "1234567", "open", Some(1), "linkId"))
+        val accountLink = Seq(AccountLink("someEori", true, "1234567", "open", Some(1), "linkId"))
 
         when(mockSessionCache.getAccountLinks(testSessionId))
           .thenReturn(Future.successful(Option(accountLink)))
@@ -187,7 +187,7 @@ class AccountLinkControllerSpec extends SpecBase {
     val testSessionId: String = "sessionId"
     val testLinkId: String = "linkId"
     val testEori: String = "someEori"
-    val accountLink: AccountLink = AccountLink("someEori", "someAccountNumber", "open", Some(1), "linkId")
+    val accountLink: AccountLink = AccountLink("someEori", false, "someAccountNumber", "open", Some(1), "linkId")
 
     val app: Application = applicationBuilder().overrides(
       inject.bind[SessionCacheRepository].toInstance(mockSessionCache)

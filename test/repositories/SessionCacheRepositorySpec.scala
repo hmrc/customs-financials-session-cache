@@ -34,7 +34,7 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
     }
 
     "return none if there is data stored by a given session id but no data found associated to a given linkId" in new Setup {
-      val accountLink: AccountLink = AccountLink("someEori", "someAccountNumber", "open", Some(1), "linkId")
+      val accountLink: AccountLink = AccountLink("someEori", false, "someAccountNumber", "open", Some(1), "linkId")
 
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
@@ -45,7 +45,7 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
     }
 
     "return accountLink if the sessionId is stored and there is a linkId match in the session" in new Setup {
-      val accountLink: AccountLink = AccountLink("someEori", "someAccountNumber", "open", Some(1), "linkId")
+      val accountLink: AccountLink = AccountLink("someEori", false, "someAccountNumber", "open", Some(1), "linkId")
 
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
@@ -65,7 +65,7 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
     }
 
     "return none if there is data stored by a given session id but no data found associated to a given eori" in new Setup {
-      val accountLink: AccountLink = AccountLink("someEori", "someAccountNumber", "open", Some(1), "linkId")
+      val accountLink: AccountLink = AccountLink("someEori", false, "someAccountNumber", "open", Some(1), "linkId")
 
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
@@ -76,7 +76,7 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
     }
 
     "return accountLinks if the sessionId is stored and there is a eori match in the session" in new Setup {
-      val accountLink: AccountLink = AccountLink("someEori", "1234567", "open", Some(1), "linkId")
+      val accountLink: AccountLink = AccountLink("someEori", false, "1234567", "open", Some(1), "linkId")
 
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
@@ -90,10 +90,10 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
   "clearAndInsert" should {
     "remove the existing data associated with the sessionId and populate the links" in new Setup {
       val accountLinks: Seq[AccountLink] = Seq(
-        AccountLink("someEori", "someAccountNumber", "open", Some(1), "linkId"),
-        AccountLink("someEori2", "someAccountNumber2", "closed", Some(1), "linkId2"),
-        AccountLink("someEori3", "someAccountNumber3", "inhibited", Some(1), "linkId3"),
-        AccountLink("someEori4", "someAccountNumber4", "suspended", Some(1), "linkId4")
+        AccountLink("someEori", false, "someAccountNumber", "open", Some(1), "linkId"),
+        AccountLink("someEori2", false, "someAccountNumber2", "closed", Some(1), "linkId2"),
+        AccountLink("someEori3", false, "someAccountNumber3", "inhibited", Some(1), "linkId3"),
+        AccountLink("someEori4", false, "someAccountNumber4", "suspended", Some(1), "linkId4")
       )
       running(app) {
         val preInsertResult = await(repository.get("someSessionId", "linkId"))
@@ -104,17 +104,17 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
         val postInsertResult3 = await(repository.get("someSessionId", "linkId3"))
         val postInsertResult4 = await(repository.get("someSessionId", "linkId4"))
 
-        postInsertResult1 mustBe Some(AccountLink("someEori", "someAccountNumber", "open", Some(1), "linkId"))
-        postInsertResult2 mustBe Some(AccountLink("someEori2", "someAccountNumber2", "closed", Some(1), "linkId2"))
-        postInsertResult3 mustBe Some(AccountLink("someEori3", "someAccountNumber3", "inhibited", Some(1), "linkId3"))
-        postInsertResult4 mustBe Some(AccountLink("someEori4", "someAccountNumber4", "suspended", Some(1), "linkId4"))
+        postInsertResult1 mustBe Some(AccountLink("someEori", false, "someAccountNumber", "open", Some(1), "linkId"))
+        postInsertResult2 mustBe Some(AccountLink("someEori2", false, "someAccountNumber2", "closed", Some(1), "linkId2"))
+        postInsertResult3 mustBe Some(AccountLink("someEori3", false, "someAccountNumber3", "inhibited", Some(1), "linkId3"))
+        postInsertResult4 mustBe Some(AccountLink("someEori4", false, "someAccountNumber4", "suspended", Some(1), "linkId4"))
       }
     }
   }
 
   "remove" should {
     "return true if the remove was successful" in new Setup {
-      val accountLink: AccountLink = AccountLink("someEori", "someAccountNumber", "open", Some(1), "linkId")
+      val accountLink: AccountLink = AccountLink("someEori", false, "someAccountNumber", "open", Some(1), "linkId")
 
       await(repository.clearAndInsert("someSessionId", Seq(accountLink)))
       running(app){
