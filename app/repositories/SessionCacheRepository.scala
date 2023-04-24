@@ -113,10 +113,6 @@ object AccountLinksMongo {
         .contramap(_.toInstant(ZoneOffset.UTC).toEpochMilli.toString)
     final val localDateTimeFormat: Format[LocalDateTime] =
       Format(localDateTimeReads, localDateTimeWrites)
-
-    trait Implicits {
-      implicit val jatLocalDateTimeFormat: Format[LocalDateTime] = outer.localDateTimeFormat
-    }
   }
 
   object MongoJavatimeFormats extends MongoJavatimeFormats

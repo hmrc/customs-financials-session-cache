@@ -26,6 +26,7 @@ object AccountLinksRequest {
 }
 
 case class AccountLink(eori: String,
+                       isNiAccount: Boolean,
                        accountNumber: String,
                        accountStatus: String,
                        accountStatusId: Option[Int],
