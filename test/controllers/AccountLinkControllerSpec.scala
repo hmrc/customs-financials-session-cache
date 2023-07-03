@@ -185,7 +185,7 @@ class AccountLinkControllerSpec extends SpecBase {
   "getSessionId" should {
     "Return OK when session is valid" in new Setup {
       running(app) {
-        when(mockSessionCache.verifySessionId(testSessionId)).thenReturn(Future.successful(false))
+        when(mockSessionCache.verifySessionId(testSessionId)).thenReturn(Future.successful(true))
 
         val result = route(app, fakeRequest(GET,
           controllers.routes.AccountLinkController.getSessionId(testSessionId).url)).value
@@ -196,7 +196,7 @@ class AccountLinkControllerSpec extends SpecBase {
 
     "Return NotFound when sessionId is missing" in new Setup {
       running(app) {
-        when(mockSessionCache.verifySessionId(testSessionId)).thenReturn(Future.successful(true))
+        when(mockSessionCache.verifySessionId(testSessionId)).thenReturn(Future.successful(false))
 
         val result = route(app, fakeRequest(GET,
           controllers.routes.AccountLinkController.getSessionId(testSessionId).url)).value

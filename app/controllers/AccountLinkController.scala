@@ -25,7 +25,7 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class AccountLinkController @Inject()(cc: ControllerComponents,
-                                       sessionCacheRepository: SessionCacheRepository
+                                      sessionCacheRepository: SessionCacheRepository
                                      )(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
   def getAccountLink(id: String, linkId: String): Action[AnyContent] = Action.async {
@@ -44,14 +44,14 @@ class AccountLinkController @Inject()(cc: ControllerComponents,
 
   def getSessionId(sessionId: String): Action[AnyContent] = Action.async {
     sessionCacheRepository.verifySessionId(sessionId).map {
-      case false => Ok(sessionId)
-      case true => NotFound
-    }.recover {case _ => InternalServerError}
+      case true => Ok(sessionId)
+      case false => NotFound
+    }.recover { case _ => InternalServerError }
   }
 
   def clearAndInsert(): Action[AccountLinksRequest] = Action.async(parse.json[AccountLinksRequest]) { implicit request =>
     sessionCacheRepository.clearAndInsert(request.body.sessionId, request.body.accountLinks).map { writeSuccessful =>
-      if(writeSuccessful){
+      if (writeSuccessful) {
         NoContent
       } else InternalServerError
     }.recover { case _ => InternalServerError}
@@ -59,11 +59,9 @@ class AccountLinkController @Inject()(cc: ControllerComponents,
 
   def remove(id:String):Action[AnyContent] = Action.async {
     sessionCacheRepository.remove(id).map{ removed =>
-      if(removed){
+      if (removed) {
         NoContent
-      }else InternalServerError
-    }.recover{
-      case _ => InternalServerError
-    }
+      } else InternalServerError
+    }.recover { case _ => InternalServerError }
   }
 }

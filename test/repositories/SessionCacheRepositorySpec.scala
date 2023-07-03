@@ -126,22 +126,22 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
   }
 
   "getSessionId" should {
-    "return false if valid sessionID" in new Setup {
+    "return true if valid sessionID" in new Setup {
       val accountLink: AccountLink = AccountLink("someEori", false, "someAccountNumber", "open", Some(1), "linkId")
 
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
         await(repository.clearAndInsert("someSessionId", Seq(accountLink)))
         val result = await(repository.verifySessionId("someSessionId"))
-        result mustBe false
+        result mustBe true
       }
     }
 
-    "return true is no sessionID found" in new Setup {
+    "return false is no sessionID found" in new Setup {
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
         val result = await(repository.verifySessionId("someSessionId"))
-        result mustBe true
+        result mustBe false
       }
     }
   }

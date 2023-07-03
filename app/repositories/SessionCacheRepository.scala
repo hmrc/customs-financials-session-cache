@@ -59,7 +59,7 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
   override def verifySessionId(sessionId: String): Future[Boolean] = {
     for {
       record <- collection.find(equal("_id", sessionId)).toSingle().toFutureOption()
-    } yield record.isEmpty
+    } yield record.nonEmpty
   }
 
   override def getAccountLinks(sessionId: String): Future[Option[Seq[AccountLink]]] = {
