@@ -56,6 +56,12 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
     } yield result
   }
 
+  override def verifySessionId(sessionId: String): Future[Boolean] = {
+    for {
+      record <- collection.find(equal("_id", sessionId)).toSingle().toFutureOption()
+    } yield record.nonEmpty
+  }
+
   override def getAccountLinks(sessionId: String): Future[Option[Seq[AccountLink]]] = {
     for {
       record <- collection.find(equal("_id", sessionId)).toSingle().toFutureOption()
@@ -83,6 +89,7 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
 
 trait SessionCacheRepository {
   def get(sessionId: String, linkId: String): Future[Option[AccountLink]]
+  def verifySessionId(sessionId: String): Future[Boolean]
   def getAccountLinks(sessionId: String): Future[Option[Seq[AccountLink]]]
   def clearAndInsert(sessionId: String, accountLinks: Seq[AccountLink]): Future[Boolean]
   def remove(sessionId: String): Future[Boolean]

@@ -182,6 +182,44 @@ class AccountLinkControllerSpec extends SpecBase {
     }
   }
 
+  "getSessionId" should {
+    "Return OK when session is valid" in new Setup {
+      running(app) {
+        when(mockSessionCache.verifySessionId(testSessionId)).thenReturn(Future.successful(true))
+
+        val result = route(app, fakeRequest(GET,
+          controllers.routes.AccountLinkController.getSessionId(testSessionId).url)).value
+
+        status(result) mustBe OK
+      }
+    }
+
+    "Return NotFound when sessionId is missing" in new Setup {
+      running(app) {
+        when(mockSessionCache.verifySessionId(testSessionId)).thenReturn(Future.successful(false))
+
+        val result = route(app, fakeRequest(GET,
+          controllers.routes.AccountLinkController.getSessionId(testSessionId).url)).value
+
+        status(result) mustBe NOT_FOUND
+      }
+    }
+
+    "Return INTERNAL_SERVER_ERROR if an exception was thrown when retrieving an " in new Setup {
+      running(app) {
+        when(mockSessionCache.verifySessionId(eqTo(testSessionId)))
+          .thenReturn(Future.failed(new RuntimeException("Something went wrong")))
+
+        running(app) {
+          val result = route(app, fakeRequest(GET,
+            controllers.routes.AccountLinkController.getSessionId(testSessionId).url)).value
+
+          status(result) mustBe INTERNAL_SERVER_ERROR
+        }
+      }
+    }
+  }
+
   trait Setup {
     val mockSessionCache: SessionCacheRepository = mock[SessionCacheRepository]
     val testSessionId: String = "sessionId"
