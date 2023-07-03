@@ -2,5 +2,6 @@
 
 GET        /account-link/:id/:linkId            controllers.AccountLinkController.getAccountLink(id: String, linkId: String)
 GET        /account-links/:sessionId            controllers.AccountLinkController.getAccountLinks(sessionId: String)
+GET        /account-links/session/:sessionId    controllers.AccountLinkController.getSessionId(sessionId: String)
 POST       /update-links                        controllers.AccountLinkController.clearAndInsert()
 DELETE     /remove/:id                          controllers.AccountLinkController.remove(id:String)

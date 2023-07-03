@@ -42,6 +42,13 @@ class AccountLinkController @Inject()(cc: ControllerComponents,
     }.recover { case _ => InternalServerError }
   }
 
+  def getSessionId(sessionId: String): Action[AnyContent] = Action.async {
+    sessionCacheRepository.verifySessionId(sessionId).map {
+      case false => Ok(sessionId)
+      case true => NotFound
+    }.recover {case _ => InternalServerError}
+  }
+
   def clearAndInsert(): Action[AccountLinksRequest] = Action.async(parse.json[AccountLinksRequest]) { implicit request =>
     sessionCacheRepository.clearAndInsert(request.body.sessionId, request.body.accountLinks).map { writeSuccessful =>
       if(writeSuccessful){
