@@ -89,9 +89,13 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
 
 trait SessionCacheRepository {
   def get(sessionId: String, linkId: String): Future[Option[AccountLink]]
+
   def verifySessionId(sessionId: String): Future[Boolean]
+
   def getAccountLinks(sessionId: String): Future[Option[Seq[AccountLink]]]
+
   def clearAndInsert(sessionId: String, accountLinks: Seq[AccountLink]): Future[Boolean]
+
   def remove(sessionId: String): Future[Boolean]
 }
 
@@ -102,14 +106,15 @@ object AccountLinksMongo {
     (
       (__ \ "accountLinks").write[Seq[AccountLink]] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.localDateTimeWrites)
-      ) (unlift(AccountLinksMongo.unapply))
+      )(unlift(AccountLinksMongo.unapply))
   }
   implicit lazy val reads: Reads[AccountLinksMongo] = {
     (
       (__ \ "accountLinks").read[Seq[AccountLink]] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.localDateTimeReads)
-      ) (AccountLinksMongo.apply _)
+      )(AccountLinksMongo.apply _)
   }
+
   trait MongoJavatimeFormats {
     outer =>
     final val localDateTimeReads: Reads[LocalDateTime] =
@@ -126,6 +131,3 @@ object AccountLinksMongo {
 
   implicit val format: Format[AccountLinksMongo] = Format(reads, writes)
 }
-
-
-

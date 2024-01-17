@@ -25,7 +25,8 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 
-class SpecBase extends AnyWordSpecLike with Matchers with MockitoSugar with OptionValues with ScalaFutures with IntegrationPatience {
+class SpecBase extends AnyWordSpecLike
+  with Matchers with MockitoSugar with OptionValues with ScalaFutures with IntegrationPatience {
 
   protected def applicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
@@ -34,5 +35,6 @@ class SpecBase extends AnyWordSpecLike with Matchers with MockitoSugar with Opti
       .configure("metrics.enabled" -> "false")
 
 
-  def fakeRequest(method: String = "", path: String = ""): FakeRequest[AnyContentAsEmpty.type] = FakeRequest(method, path)
+  def fakeRequest(method: String = "", path: String = ""
+                 ): FakeRequest[AnyContentAsEmpty.type] = FakeRequest(method, path)
 }

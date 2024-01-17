@@ -33,7 +33,7 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
       }
     }
 
-    "return none if there is data stored by a given session id but no data found associated to a given linkId" in new Setup {
+    "return none if there is data stored by a session id but no data found associated to the linkId" in new Setup {
       val accountLink: AccountLink = AccountLink("someEori", false, "someAccountNumber", "open", Some(1), "linkId")
 
       running(app) {
@@ -64,7 +64,7 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
       }
     }
 
-    "return none if there is data stored by a given session id but no data found associated to a given eori" in new Setup {
+    "return none if there is data stored by a session id but no data found associated to the eori" in new Setup {
       val accountLink: AccountLink = AccountLink("someEori", false, "someAccountNumber", "open", Some(1), "linkId")
 
       running(app) {
@@ -104,10 +104,17 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
         val postInsertResult3 = await(repository.get("someSessionId", "linkId3"))
         val postInsertResult4 = await(repository.get("someSessionId", "linkId4"))
 
-        postInsertResult1 mustBe Some(AccountLink("someEori", false, "someAccountNumber", "open", Some(1), "linkId"))
-        postInsertResult2 mustBe Some(AccountLink("someEori2", false, "someAccountNumber2", "closed", Some(1), "linkId2"))
-        postInsertResult3 mustBe Some(AccountLink("someEori3", false, "someAccountNumber3", "inhibited", Some(1), "linkId3"))
-        postInsertResult4 mustBe Some(AccountLink("someEori4", false, "someAccountNumber4", "suspended", Some(1), "linkId4"))
+        postInsertResult1 mustBe Some(AccountLink(
+          "someEori", false, "someAccountNumber", "open", Some(1), "linkId"))
+
+        postInsertResult2 mustBe Some(AccountLink(
+          "someEori2", false, "someAccountNumber2", "closed", Some(1), "linkId2"))
+
+        postInsertResult3 mustBe Some(AccountLink(
+          "someEori3", false, "someAccountNumber3", "inhibited", Some(1), "linkId3"))
+
+        postInsertResult4 mustBe Some(AccountLink(
+          "someEori4", false, "someAccountNumber4", "suspended", Some(1), "linkId4"))
       }
     }
   }
