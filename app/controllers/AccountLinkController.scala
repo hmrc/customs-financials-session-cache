@@ -55,7 +55,9 @@ class AccountLinkController @Inject()(cc: ControllerComponents,
         request.body.sessionId, request.body.accountLinks).map { writeSuccessful =>
         if (writeSuccessful) {
           NoContent
-        } else InternalServerError
+        } else {
+          InternalServerError
+        }
       }.recover { case _ => InternalServerError }
   }
 
@@ -63,7 +65,9 @@ class AccountLinkController @Inject()(cc: ControllerComponents,
     sessionCacheRepository.remove(id).map { removed =>
       if (removed) {
         NoContent
-      } else InternalServerError
+      } else {
+        InternalServerError
+      }
     }.recover { case _ => InternalServerError }
   }
 }
