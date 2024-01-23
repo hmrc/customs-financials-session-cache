@@ -10,7 +10,7 @@ val testScalaStyleConfigFile = "test-scalastyle-config.xml"
 val testDirectory = "test"
 
 lazy val scalastyleSettings = Seq(scalastyleConfig := baseDirectory.value /
-  "scalastyle-config.xml", (scalastyleConfig in Test) := baseDirectory.value / testDirectory
+  "scalastyle-config.xml", (Test / scalastyleConfig) := baseDirectory.value / testDirectory
   / "test-scalastyle-config.xml")
 
 lazy val microservice = Project(appName, file("."))
@@ -36,12 +36,24 @@ lazy val microservice = Project(appName, file("."))
     ScoverageKeys.coverageMinimumBranchTotal  := 100,
     ScoverageKeys.coverageMinimumStmtTotal := 100,
     ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting := true
+    ScoverageKeys.coverageHighlighting := true,
+    scalacOptions ++= Seq(
+      "-P:silencer:pathFilters=routes",
+      "-Wunused:imports",
+      "-Wunused:params",
+      "-Wunused:patvars",
+      "-Wunused:implicits",
+      "-Wunused:explicits",
+      "-Wunused:privates"),
+    Test / scalacOptions ++= Seq(
+      "-Wunused:imports",
+      "-Wunused:params",
+      "-Wunused:patvars",
+      "-Wunused:implicits",
+      "-Wunused:explicits",
+      "-Wunused:privates")
   )
   .settings(PlayKeys.playDefaultPort:= 9840)
-  .settings(publishingSettings: _*)
   .configs(IntegrationTest)
   .settings(scalastyleSettings)
-  .settings(integrationTestSettings(): _*)
   .settings(resolvers += Resolver.jcenterRepo)
-
