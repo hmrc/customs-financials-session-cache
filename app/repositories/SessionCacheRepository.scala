@@ -63,9 +63,11 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
   }
 
   override def getAccountLinks(sessionId: String): Future[Option[Seq[AccountLink]]] = {
+    val target = 7
+
     for {
       record <- collection.find(equal("_id", sessionId)).toSingle().toFutureOption()
-      result = record.flatMap(a => Option(a.accountLinks.filter(link => link.accountNumber.length == 7)))
+      result = record.flatMap(a => Option(a.accountLinks.filter(link => link.accountNumber.length == target)))
     } yield result
   }
 
@@ -117,14 +119,14 @@ object AccountLinksMongo {
 
   trait MongoJavatimeFormats {
     outer =>
+
     final val localDateTimeReads: Reads[LocalDateTime] =
       Reads.at[String](__ \ "$date" \ "$numberLong")
         .map(dateTime => Instant.ofEpochMilli(dateTime.toLong).atZone(ZoneOffset.UTC).toLocalDateTime)
+
     final val localDateTimeWrites: Writes[LocalDateTime] =
       Writes.at[String](__ \ "$date" \ "$numberLong")
         .contramap(_.toInstant(ZoneOffset.UTC).toEpochMilli.toString)
-    final val localDateTimeFormat: Format[LocalDateTime] =
-      Format(localDateTimeReads, localDateTimeWrites)
   }
 
   object MongoJavatimeFormats extends MongoJavatimeFormats
