@@ -28,13 +28,14 @@ import play.api.test.FakeRequest
 class SpecBase extends AnyWordSpecLike
   with Matchers with MockitoSugar with OptionValues with ScalaFutures with IntegrationPatience {
 
+  val emptyString = ""
+
   protected def applicationBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
       ).configure("auditing.enabled" -> "false")
       .configure("metrics.enabled" -> "false")
 
-
-  def fakeRequest(method: String = "", path: String = ""
+  def fakeRequest(method: String = emptyString, path: String = emptyString
                  ): FakeRequest[AnyContentAsEmpty.type] = FakeRequest(method, path)
 }
