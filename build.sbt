@@ -1,31 +1,39 @@
-import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 import scoverage.ScoverageKeys
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import uk.gov.hmrc.DefaultBuildSettings.targetJvm
+import uk.gov.hmrc.DefaultBuildSettings.itSettings
 
 val appName = "customs-financials-session-cache"
 val silencerVersion = "1.17.13"
+val bootstrapVersion = "7.22.0"
 val scalaStyleConfigFile = "scalastyle-config.xml"
 val testScalaStyleConfigFile = "test-scalastyle-config.xml"
 val testDirectory = "test"
+val scala2_13_8 = "2.13.8"
 
 lazy val scalastyleSettings = Seq(scalastyleConfig := baseDirectory.value /
   "scalastyle-config.xml", (Test / scalastyleConfig) := baseDirectory.value / testDirectory
   / "test-scalastyle-config.xml")
 
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test")
+  .settings(itSettings)
+  .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-28" % bootstrapVersion % Test))
+
+ThisBuild / majorVersion := 0
+ThisBuild / scalaVersion := scala2_13_8
+
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
-    majorVersion                     := 0,
-    scalaVersion                     := "2.13.8",
-    targetJvm                        := "jvm-11",
-    libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
+    targetJvm := "jvm-11",
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
 
     scalacOptions ++= Seq("-Wunused:imports", "-Wunused:params", "-Wunused:patvars",
       "-Wunused:implicits", "-Wunused:explicits", "-Wunused:privates"),
 
     Test / scalacOptions ++= Seq("-Wunused:imports", "-Wunused:params", "-Wunused:patvars",
-      "-Wunused:implicits","-Wunused:explicits", "-Wunused:privates"),
+      "-Wunused:implicits", "-Wunused:explicits", "-Wunused:privates"),
 
     libraryDependencies ++= Seq(
       compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
@@ -33,7 +41,7 @@ lazy val microservice = Project(appName, file("."))
     ),
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*filters.*;.*handlers.*;.*components.*;" +
       ".*javascript.*;.*Routes.*;.*GuiceInjector;.*ControllerConfiguration",
-    ScoverageKeys.coverageMinimumBranchTotal  := 100,
+    ScoverageKeys.coverageMinimumBranchTotal := 100,
     ScoverageKeys.coverageMinimumStmtTotal := 100,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
@@ -53,7 +61,7 @@ lazy val microservice = Project(appName, file("."))
       "-Wunused:explicits",
       "-Wunused:privates")
   )
-  .settings(PlayKeys.playDefaultPort:= 9840)
+  .settings(PlayKeys.playDefaultPort := 9840)
   .configs(IntegrationTest)
   .settings(scalastyleSettings)
   .settings(resolvers += Resolver.jcenterRepo)
