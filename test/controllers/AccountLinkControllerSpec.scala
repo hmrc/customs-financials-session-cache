@@ -33,7 +33,9 @@ class AccountLinkControllerSpec extends SpecBase {
         when(mockSessionCache.get(eqTo(testSessionId), eqTo(testLinkId)))
           .thenReturn(Future.successful(Some(accountLink)))
 
-        val result = route(app, fakeRequest(GET, controllers.routes.AccountLinkController.getAccountLink(testSessionId, testLinkId).url)).value
+        val result = route(app, fakeRequest(
+          GET, controllers.routes.AccountLinkController.getAccountLink(
+            testSessionId, testLinkId).url)).value
         status(result) mustBe OK
 
         val accountLinkResult = contentAsJson(result).as[AccountLink]
@@ -46,7 +48,9 @@ class AccountLinkControllerSpec extends SpecBase {
         .thenReturn(Future.successful(None))
 
       running(app) {
-        val result = route(app, fakeRequest(GET, controllers.routes.AccountLinkController.getAccountLink(testSessionId, testLinkId).url)).value
+        val result = route(app, fakeRequest(
+          GET, controllers.routes.AccountLinkController.getAccountLink(
+            testSessionId, testLinkId).url)).value
         status(result) mustBe NOT_FOUND
       }
     }
@@ -69,12 +73,13 @@ class AccountLinkControllerSpec extends SpecBase {
         .thenReturn(Future.successful(true))
 
       running(app) {
-        val result = route(app, fakeRequest(POST, controllers.routes.AccountLinkController.clearAndInsert().url).withJsonBody(
-          Json.obj(
-            "sessionId" -> testSessionId,
-            "accountLinks" -> Json.arr(Json.toJson(accountLink))
-          )
-        )).value
+        val result = route(
+          app, fakeRequest(POST, controllers.routes.AccountLinkController.clearAndInsert().url).withJsonBody(
+            Json.obj(
+              "sessionId" -> testSessionId,
+              "accountLinks" -> Json.arr(Json.toJson(accountLink))
+            )
+          )).value
         status(result) mustBe NO_CONTENT
       }
     }
@@ -84,12 +89,13 @@ class AccountLinkControllerSpec extends SpecBase {
         .thenReturn(Future.successful(false))
 
       running(app) {
-        val result = route(app, fakeRequest(POST, controllers.routes.AccountLinkController.clearAndInsert().url).withJsonBody(
-          Json.obj(
-            "sessionId" -> testSessionId,
-            "accountLinks" -> Json.arr(Json.toJson(accountLink))
-          )
-        )).value
+        val result = route(
+          app, fakeRequest(POST, controllers.routes.AccountLinkController.clearAndInsert().url).withJsonBody(
+            Json.obj(
+              "sessionId" -> testSessionId,
+              "accountLinks" -> Json.arr(Json.toJson(accountLink))
+            )
+          )).value
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
@@ -99,12 +105,13 @@ class AccountLinkControllerSpec extends SpecBase {
         .thenReturn(Future.failed(new RuntimeException("Something went wrong")))
 
       running(app) {
-        val result = route(app, fakeRequest(POST, controllers.routes.AccountLinkController.clearAndInsert().url).withJsonBody(
-          Json.obj(
-            "sessionId" -> testSessionId,
-            "accountLinks" -> Json.arr(Json.toJson(accountLink))
-          )
-        )).value
+        val result = route(
+          app, fakeRequest(POST, controllers.routes.AccountLinkController.clearAndInsert().url).withJsonBody(
+            Json.obj(
+              "sessionId" -> testSessionId,
+              "accountLinks" -> Json.arr(Json.toJson(accountLink))
+            )
+          )).value
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
@@ -116,7 +123,9 @@ class AccountLinkControllerSpec extends SpecBase {
         .thenReturn(Future.successful(true))
 
       running(app) {
-        val result = route(app, fakeRequest(DELETE, controllers.routes.AccountLinkController.remove(testSessionId).url)).value
+        val result = route(
+          app, fakeRequest(DELETE, controllers.routes.AccountLinkController.remove(
+            testSessionId).url)).value
         status(result) mustBe NO_CONTENT
       }
     }
@@ -126,7 +135,9 @@ class AccountLinkControllerSpec extends SpecBase {
         .thenReturn(Future.successful(false))
 
       running(app) {
-        val result = route(app, fakeRequest(DELETE, controllers.routes.AccountLinkController.remove(testSessionId).url)).value
+        val result = route(
+          app, fakeRequest(DELETE, controllers.routes.AccountLinkController.remove(
+            testSessionId).url)).value
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
@@ -136,7 +147,9 @@ class AccountLinkControllerSpec extends SpecBase {
         .thenReturn(Future.failed(new RuntimeException("Something went wrong")))
 
       running(app) {
-        val result = route(app, fakeRequest(DELETE, controllers.routes.AccountLinkController.remove(testSessionId).url)).value
+        val result = route(
+          app, fakeRequest(DELETE, controllers.routes.AccountLinkController.remove(
+            testSessionId).url)).value
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }

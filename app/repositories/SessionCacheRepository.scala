@@ -63,9 +63,11 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
   }
 
   override def getAccountLinks(sessionId: String): Future[Option[Seq[AccountLink]]] = {
+    val target = 7
+
     for {
       record <- collection.find(equal("_id", sessionId)).toSingle().toFutureOption()
-      result = record.flatMap(a => Option(a.accountLinks.filter(link => link.accountNumber.size == 7)))
+      result = record.flatMap(a => Option(a.accountLinks.filter(link => link.accountNumber.length == target)))
     } yield result
   }
 
@@ -89,9 +91,13 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
 
 trait SessionCacheRepository {
   def get(sessionId: String, linkId: String): Future[Option[AccountLink]]
+
   def verifySessionId(sessionId: String): Future[Boolean]
+
   def getAccountLinks(sessionId: String): Future[Option[Seq[AccountLink]]]
+
   def clearAndInsert(sessionId: String, accountLinks: Seq[AccountLink]): Future[Boolean]
+
   def remove(sessionId: String): Future[Boolean]
 }
 
@@ -102,30 +108,28 @@ object AccountLinksMongo {
     (
       (__ \ "accountLinks").write[Seq[AccountLink]] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.localDateTimeWrites)
-      ) (unlift(AccountLinksMongo.unapply))
+      )(unlift(AccountLinksMongo.unapply))
   }
   implicit lazy val reads: Reads[AccountLinksMongo] = {
     (
       (__ \ "accountLinks").read[Seq[AccountLink]] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.localDateTimeReads)
-      ) (AccountLinksMongo.apply _)
+      )(AccountLinksMongo.apply _)
   }
+
   trait MongoJavatimeFormats {
     outer =>
+
     final val localDateTimeReads: Reads[LocalDateTime] =
       Reads.at[String](__ \ "$date" \ "$numberLong")
         .map(dateTime => Instant.ofEpochMilli(dateTime.toLong).atZone(ZoneOffset.UTC).toLocalDateTime)
+
     final val localDateTimeWrites: Writes[LocalDateTime] =
       Writes.at[String](__ \ "$date" \ "$numberLong")
         .contramap(_.toInstant(ZoneOffset.UTC).toEpochMilli.toString)
-    final val localDateTimeFormat: Format[LocalDateTime] =
-      Format(localDateTimeReads, localDateTimeWrites)
   }
 
   object MongoJavatimeFormats extends MongoJavatimeFormats
 
   implicit val format: Format[AccountLinksMongo] = Format(reads, writes)
 }
-
-
-

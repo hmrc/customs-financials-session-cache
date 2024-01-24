@@ -32,7 +32,7 @@ class AccountLinkController @Inject()(cc: ControllerComponents,
     sessionCacheRepository.get(id, linkId).map {
       case Some(accountLink) => Ok(Json.toJson(accountLink))
       case None => NotFound
-    }.recover { case _ => InternalServerError}
+    }.recover { case _ => InternalServerError }
   }
 
   def getAccountLinks(sessionId: String): Action[AnyContent] = Action.async {
@@ -49,19 +49,25 @@ class AccountLinkController @Inject()(cc: ControllerComponents,
     }.recover { case _ => InternalServerError }
   }
 
-  def clearAndInsert(): Action[AccountLinksRequest] = Action.async(parse.json[AccountLinksRequest]) { implicit request =>
-    sessionCacheRepository.clearAndInsert(request.body.sessionId, request.body.accountLinks).map { writeSuccessful =>
-      if (writeSuccessful) {
-        NoContent
-      } else InternalServerError
-    }.recover { case _ => InternalServerError}
+  def clearAndInsert(): Action[AccountLinksRequest] = Action.async(parse.json[AccountLinksRequest]) {
+    implicit request =>
+      sessionCacheRepository.clearAndInsert(
+        request.body.sessionId, request.body.accountLinks).map { writeSuccessful =>
+        if (writeSuccessful) {
+          NoContent
+        } else {
+          InternalServerError
+        }
+      }.recover { case _ => InternalServerError }
   }
 
-  def remove(id:String):Action[AnyContent] = Action.async {
-    sessionCacheRepository.remove(id).map{ removed =>
+  def remove(id: String): Action[AnyContent] = Action.async {
+    sessionCacheRepository.remove(id).map { removed =>
       if (removed) {
         NoContent
-      } else InternalServerError
+      } else {
+        InternalServerError
+      }
     }.recover { case _ => InternalServerError }
   }
 }
