@@ -5,10 +5,14 @@ import uk.gov.hmrc.DefaultBuildSettings.itSettings
 val appName = "customs-financials-session-cache"
 val silencerVersion = "1.17.13"
 val bootstrapVersion = "7.22.0"
+
+val scala2_13_8 = "2.13.8"
+ThisBuild / majorVersion := 0
+ThisBuild / scalaVersion := scala2_13_8
+
 val scalaStyleConfigFile = "scalastyle-config.xml"
 val testScalaStyleConfigFile = "test-scalastyle-config.xml"
 val testDirectory = "test"
-val scala2_13_8 = "2.13.8"
 
 lazy val scalastyleSettings = Seq(scalastyleConfig := baseDirectory.value /
   "scalastyle-config.xml", (Test / scalastyleConfig) := baseDirectory.value / testDirectory
