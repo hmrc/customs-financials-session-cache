@@ -16,7 +16,7 @@ object AppDependencies {
     "com.typesafe.play" %% "play-test" % "2.9.2" % Test,
     "com.vladsch.flexmark" % "flexmark-all" % "0.64.8" % "test",
     "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.1" % "test",
-    "org.mockito" %% "mockito-scala-scalatest" % "1.17.14" % "test",
+    "org.mockito" %% "mockito-scala-scalatest" % "1.17.29" % "test",
     "uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrapVersion % "test"
   )
 }
