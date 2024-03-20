@@ -22,7 +22,7 @@ lazy val scalastyleSettings = Seq(scalastyleConfig := baseDirectory.value /
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
-  .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-29" % bootstrapVersion % Test))
+  .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrapVersion % Test))
 
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := scala2_13_12
