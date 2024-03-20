@@ -34,7 +34,7 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
 
     scalacOptions ++= Seq("-Wunused:imports", "-Wunused:params", "-Wunused:patvars",
-      "-Wunused:implicits", "-Wunused:explicits", "-Wunused:privates"),
+      "-Wunused:implicits", "-Wunused:explicits", "-Wunused:privates", "-Wconf:cat=unused-imports&src=routes/.*:s"),
 
     Test / scalacOptions ++= Seq("-Wunused:imports", "-Wunused:params", "-Wunused:patvars",
       "-Wunused:implicits", "-Wunused:explicits", "-Wunused:privates"),
