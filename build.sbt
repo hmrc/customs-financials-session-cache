@@ -1,11 +1,10 @@
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings.targetJvm
-import uk.gov.hmrc.DefaultBuildSettings.itSettings
 
 val appName = "customs-financials-session-cache"
 
 val silencerVersion = "1.7.16"
-val bootstrapVersion = "8.5.0"
+val bootstrapVersion = "8.6.0"
 val scala2_13_12 = "2.13.12"
 
 ThisBuild / majorVersion := 0
@@ -23,9 +22,6 @@ lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
   .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrapVersion % Test))
-
-ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := scala2_13_12
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
