@@ -107,3 +107,7 @@ Removes all associated links for a given EORI based on session id
 
 ### License
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
+
+This is a sbt command alias specific to this project. It will run a scala style check, run unit tests, run integration
+tests and produce a coverage report:
+> `sbt runAllChecks`
