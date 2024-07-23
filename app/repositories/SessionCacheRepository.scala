@@ -31,6 +31,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.libs.json._
 import java.time.{Instant, ZoneOffset}
+import org.mongodb.scala.{SingleObservableFuture,ToSingleObservablePublisher}
 
 @Singleton
 class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
@@ -45,7 +46,7 @@ class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
         ascending("lastUpdated"),
         IndexOptions().name("customs-financials-cache-last-updated-index")
           .unique(true)
-          .expireAfter(config.get[Int]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+          .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
       )
     )) with SessionCacheRepository {
 
@@ -104,6 +105,10 @@ trait SessionCacheRepository {
 case class AccountLinksMongo(accountLinks: Seq[AccountLink], lastUpdated: LocalDateTime = LocalDateTime.now)
 
 object AccountLinksMongo {
+
+  def unapply(alm: AccountLinksMongo): Option[(Seq[AccountLink], LocalDateTime)] =
+    Some((alm.accountLinks, alm.lastUpdated))
+
   implicit lazy val writes: OWrites[AccountLinksMongo] = {
     (
       (__ \ "accountLinks").write[Seq[AccountLink]] and

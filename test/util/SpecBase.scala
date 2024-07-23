@@ -16,7 +16,7 @@
 
 package util
 
-import org.mockito.scalatest.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.must.Matchers

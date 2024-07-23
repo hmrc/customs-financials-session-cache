@@ -24,6 +24,9 @@ import repositories.SessionCacheRepository
 import util.SpecBase
 import scala.concurrent.Future
 
+import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.{eq => eqTo}
+
 class AccountLinkControllerSpec extends SpecBase {
 
   "getAccountLink" must {
