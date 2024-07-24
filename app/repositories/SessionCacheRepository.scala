@@ -106,14 +106,11 @@ case class AccountLinksMongo(accountLinks: Seq[AccountLink], lastUpdated: LocalD
 
 object AccountLinksMongo {
 
-  def unapply(alm: AccountLinksMongo): Option[(Seq[AccountLink], LocalDateTime)] =
-    Some((alm.accountLinks, alm.lastUpdated))
-
   implicit lazy val writes: OWrites[AccountLinksMongo] = {
     (
       (__ \ "accountLinks").write[Seq[AccountLink]] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.localDateTimeWrites)
-      )(unlift(AccountLinksMongo.unapply))
+      )(accLinks => Tuple.fromProductTyped(accLinks))
   }
   implicit lazy val reads: Reads[AccountLinksMongo] = {
     (

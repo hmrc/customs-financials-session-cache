@@ -4,7 +4,7 @@ import uk.gov.hmrc.DefaultBuildSettings.targetJvm
 val appName = "customs-financials-session-cache"
 
 val silencerVersion = "1.7.16"
-val bootstrapVersion = "9.0.0"
+val bootstrapVersion = "9.1.0"
 val scala3_3_3 = "3.3.3"
 
 ThisBuild / majorVersion := 0
