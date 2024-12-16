@@ -15,8 +15,8 @@ val testScalaStyleConfigFile = "test-scalastyle-config.xml"
 val testDirectory = "test"
 
 lazy val scalastyleSettings = Seq(scalastyleConfig := baseDirectory.value /
-  "scalastyle-config.xml", (Test / scalastyleConfig) := baseDirectory.value / testDirectory
-  / "test-scalastyle-config.xml")
+  "scalastyle-config.xml", (Test / scalastyleConfig) := baseDirectory.value / testDirectory /
+  "test-scalastyle-config.xml")
 
 lazy val it = project
   .enablePlugins(PlayScala)
@@ -33,6 +33,9 @@ lazy val microservice = Project(appName, file("."))
       compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.for3Use2_13With("", ".12")),
       "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.for3Use2_13With("",".12")
     ),
+    scalafmtDetailedError := true,
+    scalafmtPrintDiff := true,
+    scalafmtFailOnErrors := true,
 
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*filters.*;.*handlers.*;.*components.*;" +
       ".*javascript.*;.*Routes.*;.*GuiceInjector;.*ControllerConfiguration",
@@ -48,10 +51,10 @@ lazy val microservice = Project(appName, file("."))
       "-Wunused:params",
       "-Wunused:implicits",
       "-Wunused:explicits",
-      "-Wunused:privates")
+      "-Wunused:privates"),
   )
   .settings(PlayKeys.playDefaultPort := 9840)
   .settings(scalastyleSettings)
   .settings(resolvers += Resolver.jcenterRepo)
 
-addCommandAlias("runAllChecks", ";clean;compile;coverage;test;it/test;scalastyle;Test/scalastyle;coverageReport")
+addCommandAlias("runAllChecks", ";clean;compile;coverage;test;it/test;scalafmtCheckAll;scalastyle;Test/scalastyle;coverageReport")

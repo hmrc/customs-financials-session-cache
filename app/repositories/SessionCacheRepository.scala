@@ -31,63 +31,66 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.libs.json._
 import java.time.{Instant, ZoneOffset}
-import org.mongodb.scala.{SingleObservableFuture,ToSingleObservablePublisher}
+import org.mongodb.scala.{SingleObservableFuture, ToSingleObservablePublisher}
 
 @Singleton
-class DefaultSessionCacheRepository @Inject()(mongoComponent: MongoComponent,
-                                              config: Configuration)
-                                             (implicit executionContext: ExecutionContext)
-  extends PlayMongoRepository[AccountLinksMongo](
-    collectionName = "customs-financials-session-cache",
-    mongoComponent = mongoComponent,
-    domainFormat = AccountLinksMongo.format,
-    indexes = Seq(
-      IndexModel(
-        ascending("lastUpdated"),
-        IndexOptions().name("customs-financials-cache-last-updated-index")
-          .unique(true)
-          .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+class DefaultSessionCacheRepository @Inject() (mongoComponent: MongoComponent, config: Configuration)(implicit
+  executionContext: ExecutionContext
+) extends PlayMongoRepository[AccountLinksMongo](
+      collectionName = "customs-financials-session-cache",
+      mongoComponent = mongoComponent,
+      domainFormat = AccountLinksMongo.format,
+      indexes = Seq(
+        IndexModel(
+          ascending("lastUpdated"),
+          IndexOptions()
+            .name("customs-financials-cache-last-updated-index")
+            .unique(true)
+            .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+        )
       )
-    )) with SessionCacheRepository {
+    )
+    with SessionCacheRepository {
 
-  override def get(sessionId: String, linkId: String): Future[Option[AccountLink]] = {
+  override def get(sessionId: String, linkId: String): Future[Option[AccountLink]] =
     for {
       record <- collection.find(equal("_id", sessionId)).toSingle().toFutureOption()
-      result = record.flatMap(_.accountLinks.find(_.linkId == linkId))
+      result  = record.flatMap(_.accountLinks.find(_.linkId == linkId))
     } yield result
-  }
 
-  override def verifySessionId(sessionId: String): Future[Boolean] = {
+  override def verifySessionId(sessionId: String): Future[Boolean] =
     for {
       record <- collection.find(equal("_id", sessionId)).toSingle().toFutureOption()
     } yield record.nonEmpty
-  }
 
   override def getAccountLinks(sessionId: String): Future[Option[Seq[AccountLink]]] = {
     val target = 7
 
     for {
       record <- collection.find(equal("_id", sessionId)).toSingle().toFutureOption()
-      result = record.flatMap(a => Option(a.accountLinks.filter(link => link.accountNumber.length == target)))
+      result  = record.flatMap(a => Option(a.accountLinks.filter(link => link.accountNumber.length == target)))
     } yield result
   }
 
   override def clearAndInsert(sessionId: String, accountLinks: Seq[AccountLink]): Future[Boolean] = {
     val record = AccountLinksMongo(accountLinks)
     for {
-      writeSuccessful <- collection.replaceOne(
-        equal("_id", sessionId),
-        record,
-        ReplaceOptions().upsert(true)
-      ).toFuture().map(_.wasAcknowledged())
+      writeSuccessful <- collection
+                           .replaceOne(
+                             equal("_id", sessionId),
+                             record,
+                             ReplaceOptions().upsert(true)
+                           )
+                           .toFuture()
+                           .map(_.wasAcknowledged())
     } yield writeSuccessful
   }
 
-  override def remove(sessionId: String): Future[Boolean] = {
-    collection.deleteOne(equal("_id", sessionId))
+  override def remove(sessionId: String): Future[Boolean] =
+    collection
+      .deleteOne(equal("_id", sessionId))
       .toFuture()
       .map(_.wasAcknowledged())
-  }
 }
 
 trait SessionCacheRepository {
@@ -106,28 +109,28 @@ case class AccountLinksMongo(accountLinks: Seq[AccountLink], lastUpdated: LocalD
 
 object AccountLinksMongo {
 
-  implicit lazy val writes: OWrites[AccountLinksMongo] = {
+  implicit lazy val writes: OWrites[AccountLinksMongo] =
     (
       (__ \ "accountLinks").write[Seq[AccountLink]] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.localDateTimeWrites)
-      )(accLinks => Tuple.fromProductTyped(accLinks))
-  }
-  implicit lazy val reads: Reads[AccountLinksMongo] = {
+    )(accLinks => Tuple.fromProductTyped(accLinks))
+  implicit lazy val reads: Reads[AccountLinksMongo]    =
     (
       (__ \ "accountLinks").read[Seq[AccountLink]] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.localDateTimeReads)
-      )(AccountLinksMongo.apply _)
-  }
+    )(AccountLinksMongo.apply _)
 
   trait MongoJavatimeFormats {
     outer =>
 
     final val localDateTimeReads: Reads[LocalDateTime] =
-      Reads.at[String](__ \ "$date" \ "$numberLong")
+      Reads
+        .at[String](__ \ "$date" \ "$numberLong")
         .map(dateTime => Instant.ofEpochMilli(dateTime.toLong).atZone(ZoneOffset.UTC).toLocalDateTime)
 
     final val localDateTimeWrites: Writes[LocalDateTime] =
-      Writes.at[String](__ \ "$date" \ "$numberLong")
+      Writes
+        .at[String](__ \ "$date" \ "$numberLong")
         .contramap(_.toInstant(ZoneOffset.UTC).toEpochMilli.toString)
   }
 
