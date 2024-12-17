@@ -57,4 +57,5 @@ lazy val microservice = Project(appName, file("."))
   .settings(scalastyleSettings)
   .settings(resolvers += Resolver.jcenterRepo)
 
-addCommandAlias("runAllChecks", ";clean;compile;coverage;test;it/test;scalafmtCheckAll;scalastyle;Test/scalastyle;coverageReport")
+addCommandAlias("runAllChecks",
+  ";clean;compile;coverage;test;it/test;scalafmtCheckAll;scalastyle;Test/scalastyle;coverageReport")
