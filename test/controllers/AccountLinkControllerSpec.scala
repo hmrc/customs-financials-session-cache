@@ -40,6 +40,7 @@ class AccountLinkControllerSpec extends SpecBase {
           app,
           fakeRequest(GET, controllers.routes.AccountLinkController.getAccountLink(testSessionId, testLinkId).url)
         ).value
+
         status(result) mustBe OK
 
         val accountLinkResult = contentAsJson(result).as[AccountLink]
@@ -56,6 +57,7 @@ class AccountLinkControllerSpec extends SpecBase {
           app,
           fakeRequest(GET, controllers.routes.AccountLinkController.getAccountLink(testSessionId, testLinkId).url)
         ).value
+
         status(result) mustBe NOT_FOUND
       }
     }
@@ -69,6 +71,7 @@ class AccountLinkControllerSpec extends SpecBase {
           app,
           fakeRequest(GET, controllers.routes.AccountLinkController.getAccountLink(testSessionId, testLinkId).url)
         ).value
+
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
@@ -89,6 +92,7 @@ class AccountLinkControllerSpec extends SpecBase {
             )
           )
         ).value
+
         status(result) mustBe NO_CONTENT
       }
     }
@@ -107,6 +111,7 @@ class AccountLinkControllerSpec extends SpecBase {
             )
           )
         ).value
+
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
@@ -125,6 +130,7 @@ class AccountLinkControllerSpec extends SpecBase {
             )
           )
         ).value
+
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
@@ -138,6 +144,7 @@ class AccountLinkControllerSpec extends SpecBase {
       running(app) {
         val result =
           route(app, fakeRequest(DELETE, controllers.routes.AccountLinkController.remove(testSessionId).url)).value
+
         status(result) mustBe NO_CONTENT
       }
     }
@@ -149,6 +156,7 @@ class AccountLinkControllerSpec extends SpecBase {
       running(app) {
         val result =
           route(app, fakeRequest(DELETE, controllers.routes.AccountLinkController.remove(testSessionId).url)).value
+
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
@@ -160,6 +168,7 @@ class AccountLinkControllerSpec extends SpecBase {
       running(app) {
         val result =
           route(app, fakeRequest(DELETE, controllers.routes.AccountLinkController.remove(testSessionId).url)).value
+
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
@@ -179,6 +188,7 @@ class AccountLinkControllerSpec extends SpecBase {
         ).value
 
         status(result) mustBe OK
+
         val acountLinkResult = contentAsJson(result).as[Seq[AccountLink]]
         acountLinkResult mustBe accountLink
       }
@@ -193,6 +203,7 @@ class AccountLinkControllerSpec extends SpecBase {
           app,
           fakeRequest(GET, controllers.routes.AccountLinkController.getAccountLinks(testSessionId).url)
         ).value
+
         status(result) mustBe NOT_FOUND
       }
     }
@@ -206,6 +217,7 @@ class AccountLinkControllerSpec extends SpecBase {
           app,
           fakeRequest(GET, controllers.routes.AccountLinkController.getAccountLinks(testSessionId).url)
         ).value
+
         status(result) mustBe INTERNAL_SERVER_ERROR
       }
     }
