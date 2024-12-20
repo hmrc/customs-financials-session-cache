@@ -114,7 +114,8 @@ object AccountLinksMongo {
       (__ \ "accountLinks").write[Seq[AccountLink]] and
         (__ \ "lastUpdated").write(MongoJavatimeFormats.localDateTimeWrites)
     )(accLinks => Tuple.fromProductTyped(accLinks))
-  implicit lazy val reads: Reads[AccountLinksMongo]    =
+
+  implicit lazy val reads: Reads[AccountLinksMongo] =
     (
       (__ \ "accountLinks").read[Seq[AccountLink]] and
         (__ \ "lastUpdated").read(MongoJavatimeFormats.localDateTimeReads)
