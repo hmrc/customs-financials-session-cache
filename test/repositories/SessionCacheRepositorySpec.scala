@@ -34,25 +34,25 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
     }
 
     "return none if there is data stored by a session id but no data found associated to the linkId" in new Setup {
-      val accountLink: AccountLink = AccountLink("someEori", false,
-        "someAccountNumber", "open", Some(testValue), "linkId")
+      val accountLink: AccountLink =
+        AccountLink("someEori", false, "someAccountNumber", "open", Some(testValue), "linkId")
 
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
         await(repository.clearAndInsert("someSessionId", Seq(accountLink)))
-        val result = await(repository.get("someSessionId", "invalidLinkId"))
+        val result     = await(repository.get("someSessionId", "invalidLinkId"))
         result mustBe None
       }
     }
 
     "return accountLink if the sessionId is stored and there is a linkId match in the session" in new Setup {
-      val accountLink: AccountLink = AccountLink("someEori", false,
-        "someAccountNumber", "open", Some(testValue), "linkId")
+      val accountLink: AccountLink =
+        AccountLink("someEori", false, "someAccountNumber", "open", Some(testValue), "linkId")
 
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
         await(repository.clearAndInsert("someSessionId", Seq(accountLink)))
-        val result = await(repository.get("someSessionId", "linkId"))
+        val result     = await(repository.get("someSessionId", "linkId"))
         result.value mustBe accountLink
       }
     }
@@ -67,13 +67,13 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
     }
 
     "return none if there is data stored by a session id but no data found associated to the eori" in new Setup {
-      val accountLink: AccountLink = AccountLink("someEori", false,
-        "someAccountNumber", "open", Some(testValue), "linkId")
+      val accountLink: AccountLink =
+        AccountLink("someEori", false, "someAccountNumber", "open", Some(testValue), "linkId")
 
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
         await(repository.clearAndInsert("someSessionId", Seq(accountLink)))
-        val result = await(repository.getAccountLinks("someSessionId"))
+        val result     = await(repository.getAccountLinks("someSessionId"))
         result mustBe Some(Vector())
       }
     }
@@ -84,7 +84,7 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
         await(repository.clearAndInsert("someSessionId", Seq(accountLink)))
-        val result = await(repository.getAccountLinks("someSessionId"))
+        val result     = await(repository.getAccountLinks("someSessionId"))
         result mustBe Some(Vector(accountLink))
       }
     }
@@ -99,7 +99,7 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
         AccountLink("someEori4", false, "someAccountNumber4", "suspended", Some(testValue), "linkId4")
       )
       running(app) {
-        val preInsertResult = await(repository.get("someSessionId", "linkId"))
+        val preInsertResult   = await(repository.get("someSessionId", "linkId"))
         preInsertResult mustBe None
         await(repository.clearAndInsert("someSessionId", accountLinks))
         val postInsertResult1 = await(repository.get("someSessionId", "linkId"))
@@ -107,29 +107,33 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
         val postInsertResult3 = await(repository.get("someSessionId", "linkId3"))
         val postInsertResult4 = await(repository.get("someSessionId", "linkId4"))
 
-        postInsertResult1 mustBe Some(AccountLink(
-          "someEori", false, "someAccountNumber", "open", Some(testValue), "linkId"))
+        postInsertResult1 mustBe Some(
+          AccountLink("someEori", false, "someAccountNumber", "open", Some(testValue), "linkId")
+        )
 
-        postInsertResult2 mustBe Some(AccountLink(
-          "someEori2", false, "someAccountNumber2", "closed", Some(testValue), "linkId2"))
+        postInsertResult2 mustBe Some(
+          AccountLink("someEori2", false, "someAccountNumber2", "closed", Some(testValue), "linkId2")
+        )
 
-        postInsertResult3 mustBe Some(AccountLink(
-          "someEori3", false, "someAccountNumber3", "inhibited", Some(testValue), "linkId3"))
+        postInsertResult3 mustBe Some(
+          AccountLink("someEori3", false, "someAccountNumber3", "inhibited", Some(testValue), "linkId3")
+        )
 
-        postInsertResult4 mustBe Some(AccountLink(
-          "someEori4", false, "someAccountNumber4", "suspended", Some(testValue), "linkId4"))
+        postInsertResult4 mustBe Some(
+          AccountLink("someEori4", false, "someAccountNumber4", "suspended", Some(testValue), "linkId4")
+        )
       }
     }
   }
 
   "remove" should {
     "return true if the remove was successful" in new Setup {
-      val accountLink: AccountLink = AccountLink("someEori", false,
-        "someAccountNumber", "open", Some(testValue), "linkId")
+      val accountLink: AccountLink =
+        AccountLink("someEori", false, "someAccountNumber", "open", Some(testValue), "linkId")
 
       await(repository.clearAndInsert("someSessionId", Seq(accountLink)))
 
-      running(app){
+      running(app) {
         await(repository.get("someSessionId", "linkId")) mustBe Some(accountLink)
         await(repository.remove("someSessionId"))
         await(repository.get("someSessionId", "linkId")) mustBe None
@@ -139,13 +143,13 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
 
   "getSessionId" should {
     "return true if valid sessionID" in new Setup {
-      val accountLink: AccountLink = AccountLink("someEori", false,
-        "someAccountNumber", "open", Some(testValue), "linkId")
+      val accountLink: AccountLink =
+        AccountLink("someEori", false, "someAccountNumber", "open", Some(testValue), "linkId")
 
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
         await(repository.clearAndInsert("someSessionId", Seq(accountLink)))
-        val result = await(repository.verifySessionId("someSessionId"))
+        val result     = await(repository.verifySessionId("someSessionId"))
         result mustBe true
       }
     }
@@ -153,22 +157,22 @@ class SessionCacheRepositorySpec extends SpecBase with BeforeAndAfterEach {
     "return false is no sessionID found" in new Setup {
       running(app) {
         val repository = app.injector.instanceOf[SessionCacheRepository]
-        val result = await(repository.verifySessionId("someSessionId"))
+        val result     = await(repository.verifySessionId("someSessionId"))
         result mustBe false
       }
     }
   }
 
   trait Setup {
-    val app: Application = new GuiceApplicationBuilder().build()
+    val app: Application                   = new GuiceApplicationBuilder().build()
     val repository: SessionCacheRepository = app.injector.instanceOf[SessionCacheRepository]
 
     val testValue = 1
-    val accNum = "1234567"
+    val accNum    = "1234567"
   }
 
   override def afterEach(): Unit = {
-    val app: Application = new GuiceApplicationBuilder().build()
+    val app: Application                   = new GuiceApplicationBuilder().build()
     val repository: SessionCacheRepository = app.injector.instanceOf[SessionCacheRepository]
     running(app) {
       await(repository.remove("someSessionId"))
