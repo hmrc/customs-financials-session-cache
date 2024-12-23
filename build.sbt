@@ -1,5 +1,4 @@
 import scoverage.ScoverageKeys
-import uk.gov.hmrc.DefaultBuildSettings.targetJvm
 
 val appName = "customs-financials-session-cache"
 
@@ -26,7 +25,6 @@ lazy val it = project
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .settings(
-    targetJvm := "jvm-11",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
 
     libraryDependencies ++= Seq(
