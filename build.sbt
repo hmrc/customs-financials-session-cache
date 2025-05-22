@@ -57,7 +57,6 @@ lazy val microservice = Project(appName, file("."))
   )
   .settings(PlayKeys.playDefaultPort := 9840)
   .settings(scalastyleSettings)
-  .settings(resolvers += Resolver.jcenterRepo)
 
 addCommandAlias(
   "runAllChecks",
