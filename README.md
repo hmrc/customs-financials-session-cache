@@ -39,17 +39,6 @@ The easiest way to get started with these is via the service manager CLI - you c
 * `SSO`
 * `USER_DETAILS`
 
-### Login enrolments
-
-The service can be accessed by using below enrolments and with below sample EORI numbers, via http://localhost:9949/auth-login-stub/gg-sign-in (on local) or https://<host:port>/auth-login-stub/gg-sign-in on DEV/QA/STAGING
-
-Redirect URL - `/customs/payment-records`
-
-| Enrolment Key	 | Identifier Name | Identifier Value |
-|----------------|-----------------|------------------|
-| `HMRC-CUS-ORG` | `EORINumber`    | `GB744638982000` |
-| `HMRC-CUS-ORG` | `EORINumber`    | `GB744638982001` |
-
 ## Testing
 
 The minimum requirement for test coverage is 90%. Builds will fail when the project drops below this threshold.
@@ -69,52 +58,19 @@ The minimum requirement for test coverage is 90%. Builds will fail when the proj
 
 
 ## Feature Switches
-
-> ### Caution!
-> There's a risk of WIP features being exposed in production!
-> **Don't** enable features in `application.conf`, as this will apply globally by default
-### Enable features
-| Command                                       | Description                                        |
-|-----------------------------------------------|----------------------------------------------------|
-| `sbt "run -Dfeatures.some-feature-name=true"` | enables a feature locally without risking exposure |
-
-### Available feature flags
-(There are currently no feature flags for this service)
-
-| Flag | Description |
-|------|-------------|
-
-Different features can be enabled / disabled per-environment via the `app-config-<env>` project by setting `features.some-feature: true`
-
-## Helpful commands
-
-| Command                                       | Description                                                                                                 |
-|-----------------------------------------------|-------------------------------------------------------------------------------------------------------------|
-| `sbt runAllChecks`                            | Runs all standard code checks                                                                               |
-| `sbt clean`                                   | Cleans code                                                                                                 |
-| `sbt compile`                                 | Better to say 'Compiles the code'                                                                           |
-| `sbt coverage`                                | Prints code coverage                                                                                        |
-| `sbt test`                                    | Runs unit tests                                                                                             |
-| `sbt it/test`                                 | Runs integration tests                                                                                      |
-| `sbt scalafmtCheckAll`                        | Runs code formatting checks based on .scalafmt.conf                                                         |
-| `sbt scalastyle`                              | Runs code style checks based on /scalastyle-config.xml                                                      |
-| `sbt Test/scalastyle`                         | Runs code style checks for unit test code /test-scalastyle-config.xml                                       |
-| `sbt coverageReport`                          | Produces a code coverage report                                                                             |
-| `sbt "test/testOnly *TEST_FILE_NAME*"`        | runs tests for a single file                                                                                |
-| `sbt clean coverage test coverageReport`      | Generates a unit test coverage report that you can find here target/scala-3.3.5/scoverage-report/index.html |
-| `sbt "run -Dfeatures.some-feature-name=true"` | enables a feature locally without risking exposure                                                          |
+Not applicable
 
 ## Available Routes
 
 You can find a list of microservice specific routes here - `/conf/app.routes`
 
-Application entrypoint:  `/customs/payment-records`
-
-| Path                          | Description                                                                   |
-|-------------------------------|-------------------------------------------------------------------------------|
-| GET /account-link/:id/:linkId | Retrieves the AccountLink based on the sessionId (id) and the LinkId (linkid) |
-| POST /update-links            | Stores the generated AccountLinks into mongo                                  |
-| DELETE /remove/:id            | Removes all associated links for a given EORI based on session id             |
+| Path                                  | Description                                                                             |
+|---------------------------------------|-----------------------------------------------------------------------------------------|
+| GET /account-link/:id/:linkId         | Retrieves the AccountLink based on the sessionId (id) and the LinkId (linkId)           |
+| GET /account-links/:sessionId         | Retrieves the AccountLink based on the sessionId (sessionId)                            |
+| GET /account-links/session/:sessionId | Retrieves the AccountLink based on the session (session) and the session Id (sessionId) |
+| POST /update-links                    | Stores the generated AccountLinks into mongo                                            |
+| DELETE /remove/:id                    | Removes all associated links for a given EORI based on session id                       |
 
 ## GET /account-link/:id/:linkId
 
@@ -209,12 +165,20 @@ Removes all associated links for a given EORI based on session id
 | ---------------------------------  | ---------------------------------------------------- |
 | 204 | Delete successful        |
 
+## Helpful commands
 
-
-
-
-## All tests and checks
-
-This is a sbt command alias specific to this project. It will run a scala style check, run unit tests, run integration
-tests and produce a coverage report:
-> `sbt runAllChecks`
+| Command                                       | Description                                                                                                 |
+|-----------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| `sbt runAllChecks`                            | Runs all standard code checks                                                                               |
+| `sbt clean`                                   | Cleans code                                                                                                 |
+| `sbt compile`                                 | Better to say 'Compiles the code'                                                                           |
+| `sbt coverage`                                | Prints code coverage                                                                                        |
+| `sbt test`                                    | Runs unit tests                                                                                             |
+| `sbt it/test`                                 | Runs integration tests                                                                                      |
+| `sbt scalafmtCheckAll`                        | Runs code formatting checks based on .scalafmt.conf                                                         |
+| `sbt scalastyle`                              | Runs code style checks based on /scalastyle-config.xml                                                      |
+| `sbt Test/scalastyle`                         | Runs code style checks for unit test code /test-scalastyle-config.xml                                       |
+| `sbt coverageReport`                          | Produces a code coverage report                                                                             |
+| `sbt "test/testOnly *TEST_FILE_NAME*"`        | runs tests for a single file                                                                                |
+| `sbt clean coverage test coverageReport`      | Generates a unit test coverage report that you can find here target/scala-3.3.5/scoverage-report/index.html |
+| `sbt "run -Dfeatures.some-feature-name=true"` | enables a feature locally without risking exposure                                                          |
