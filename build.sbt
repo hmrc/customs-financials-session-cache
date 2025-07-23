@@ -41,9 +41,8 @@ lazy val microservice = Project(appName, file("."))
     scalafmtFailOnErrors := true,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*filters.*;.*handlers.*;.*components.*;" +
       ".*javascript.*;.*Routes.*;.*GuiceInjector;.*ControllerConfiguration",
-    ScoverageKeys.coverageMinimumBranchTotal := 100,
-    ScoverageKeys.coverageMinimumStmtTotal := 100,
-    ScoverageKeys.coverageFailOnMinimum := false,
+    ScoverageKeys.coverageMinimumStmtTotal := 98,
+    ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
     scalacOptions := scalacOptions.value.diff(Seq("-Wunused:all")),
     scalacOptions += "-Wconf:msg=Flag.*repeatedly:s",
